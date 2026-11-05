@@ -1,15 +1,17 @@
 # Databricks notebook source
 # Databricks ML Pipeline: Customer LTV Prediction (real training version)
 # Run this notebook on serverless compute or an ML cluster in Databricks.
-# It downloads UCI Online Retail II, builds a time-based LTV target with
-# no lookahead, trains a RandomForest with MLflow tracking, and prints
-# verified metrics. No data file needs to be uploaded first.
+# It loads UCI Online Retail (I) from the UC volume
+# /Volumes/workspace/ltv/data/online_retail.csv (required on serverless:
+# the runtime does not ship openpyxl, so no XLSX download fallback),
+# builds a time-based LTV target with no lookahead, trains a RandomForest
+# with MLflow tracking, and prints verified metrics.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## 1. Download data
-# MAGIC UCI Online Retail II, real public data, downloaded on first run.
+# MAGIC UCI Online Retail (I), real public data, loaded from the UC volume CSV.
 
 # COMMAND ----------
 

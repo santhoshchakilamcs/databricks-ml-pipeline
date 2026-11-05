@@ -59,7 +59,7 @@ def main():
         # MLflow 3.x saves sklearn models via skops, which blocks tree node types
         # by default. This model was trained in this same run from our own
         # data, so trusting its own tree type is safe here.
-        mlflow.sklearn.log_model(model, "model", skops_trusted_types=["sklearn.tree._tree.Tree"])
+        mlflow.sklearn.log_model(model, name="model", skops_trusted_types=["sklearn.tree._tree.Tree"])
         drift = drift_report(train, test, FEATURES)
         Path("metrics.json").write_text(json.dumps({"metrics": metrics, "drift": drift}, indent=2))
     print(json.dumps(metrics, indent=2))

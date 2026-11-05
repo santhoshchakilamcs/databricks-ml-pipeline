@@ -1,4 +1,4 @@
-"""Download UCI Online Retail II and flatten it to data/online_retail.csv.
+"""Download UCI Online Retail (I, dataset 00352) and flatten it to data/online_retail.csv.
 
 Source: https://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx
 The raw file is NOT committed to git (large); this script re-downloads it on

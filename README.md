@@ -24,7 +24,7 @@ production deployment at NerdWallet or any other employer.
 
 ## Verified numbers (Nov 4, 2026, local run)
 
-- Data: UCI Online Retail II, real public data, 406,829 rows after dropping
+- Data: UCI Online Retail (I) (UCI dataset 00352), real public data, 406,829 rows after dropping
   missing Customer IDs. 2,718 customers had pre-split history and were used
   (customers first appearing after the split have no pre-split features).
 - Train / test: 2,174 / 544 customers (random 80/20 split, seed 42, after the
@@ -36,13 +36,19 @@ production deployment at NerdWallet or any other employer.
 - Test repeat-buyer rate: 69.5%.
 - Unit test: `tests/test_features.py` passes — pre-split spend only, and
   zero-target customers are kept, not dropped.
+- **Databricks run verified (Nov 5, 2026):** the notebook ran end-to-end on a
+  Databricks serverless job (`ltv-pipeline-training`): test RMSE 7,551.75,
+  MAE 1,113.57, R2 0.367, mean baseline RMSE 9,494.84 — all CI gates passed
+  (unit tests, training run, metric gate). Data source on Databricks: UC
+  volume `/Volumes/workspace/ltv/data/online_retail.csv`.
 
 ## Honest limits
 
-- **Not yet run on a Databricks workspace.** The notebook is written for
-  Databricks (Spark load, workspace MLflow), but no Databricks workspace
-  was available in this environment, so the verified run is local with
-  pandas + MLflow. Do not claim a production Databricks deployment.
+- **Databricks run verified, not yet a production deployment.** The
+  notebook has run end-to-end on a Databricks serverless job with workspace
+  MLflow (see verified numbers above), but there is no scheduled retraining,
+  drift monitoring, or model serving on Databricks yet. Do not claim a
+  production Databricks deployment.
 - **Not a real-time inference system.** This is batch LTV prediction with
   an MLflow model artifact. Real-time serving, latency, and reliability
   trade-offs are design notes in the notebook, not measured here.
