@@ -65,7 +65,7 @@ python3 -m venv .venv
 Data files (`data/`, `mlruns/`, `mlflow.db`) are gitignored; the app
 re-downloads public data on first run.
 
-## Live serving + CI/CD (added Nov 4, 2026)
+## Live serving + CI/CD 
 
 - **Serving app.** `app.py` (FastAPI) serves the trained model at
   `/predict`, with `/health`, `/metrics`, and `/dashboard`. Verified
