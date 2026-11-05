@@ -6,51 +6,59 @@
 # verified metrics. No data file needs to be uploaded first.
 
 # COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## 1. Download data
 # MAGIC UCI Online Retail II, real public data, downloaded on first run.
 
 # COMMAND ----------
+
+# DBTITLE 1,Download data
 from pathlib import Path
 import pandas as pd
 
 # Primary source: the CSV uploaded to the Unity Catalog volume
 # /Volumes/workspace/ltv/data/online_retail.csv (36,755,154 bytes, verified).
-# read_csv needs no openpyxl, which the serverless runtime does not ship.
-# Fallback: download the original XLSX, which needs openpyxl installed.
+# read_csv needs no openpyxl, which the serverless runtime does not ship,
+# so an XLSX download fallback is not possible on this runtime: the volume
+# CSV is required. Fail immediately with a clear error if it is missing.
 csv_path = "/Volumes/workspace/ltv/data/online_retail.csv"
-if Path(csv_path).exists():
-    df = pd.read_csv(csv_path)
-    print(f"Loaded from volume: {csv_path}")
-else:
-    import urllib.request
-    xlsx = Path("/tmp/online_retail.xlsx")
-    if not xlsx.exists():
-        urllib.request.urlretrieve(
-            "https://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx", xlsx)
-    df = pd.read_excel(xlsx)
-    df = df[df["CustomerID"].notna()].rename(columns={"CustomerID": "Customer ID", "InvoiceNo": "Invoice", "UnitPrice": "Price"})
+if not Path(csv_path).exists():
+    raise FileNotFoundError(
+        f"Required data file not found: {csv_path}. "
+        "Upload online_retail.csv to the volume before running this notebook."
+    )
+df = pd.read_csv(csv_path)
+print(f"Loaded from volume: {csv_path}")
 print(f"Rows: {len(df)}, customers: {df['Customer ID'].nunique()}")
 
 # COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## 2. Features and target, no lookahead
 # MAGIC Features use only transactions before 2011-06-01. Target is spend after that date.
 # MAGIC Customers with no post-split spend are kept with target 0.0.
 
 # COMMAND ----------
+
+# DBTITLE 1,Import features module
 import sys
-sys.path.insert(0, "/Repos/santhoshchakilamsch@gmail.com/databricks-ml-pipeline/src")
+# /Workspace prefix is required: the legacy /Repos path is not mounted
+# on serverless compute (and /Workspace/Repos also works on classic clusters).
+sys.path.insert(0, "/Workspace/Repos/santhoshchakilamsch@gmail.com/databricks-ml-pipeline/src")
 from features import build_customer_table
 
 customers = build_customer_table(df, "2011-06-01")
 print(f"Customers with pre-split history: {len(customers)}")
 
 # COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## 3. Train with MLflow
 
 # COMMAND ----------
+
+# DBTITLE 1,Train with MLflow
 import mlflow
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
@@ -73,7 +81,7 @@ with mlflow.start_run():
     }
     mlflow.log_params({"model": "RandomForestRegressor", "split": "2011-06-01"})
     mlflow.log_metrics(metrics)
-    mlflow.sklearn.log_model(model, "model")
+    mlflow.sklearn.log_model(model, name="model", input_example=test[FEATURES].head(3))
     print("DATABRICKS_METRICS:", metrics)
     assert metrics["rmse"] < metrics["baseline_rmse"], "model must beat mean baseline"
     print("PASS: model beats mean baseline")
