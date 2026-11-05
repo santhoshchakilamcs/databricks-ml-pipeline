@@ -11,16 +11,25 @@
 # MAGIC UCI Online Retail II, real public data, downloaded on first run.
 
 # COMMAND ----------
-import urllib.request
 from pathlib import Path
 import pandas as pd
 
-xlsx = Path("/tmp/online_retail.xlsx")
-if not xlsx.exists():
-    urllib.request.urlretrieve(
-        "https://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx", xlsx)
-df = pd.read_excel(xlsx)
-df = df[df["CustomerID"].notna()].rename(columns={"CustomerID": "Customer ID", "InvoiceNo": "Invoice", "UnitPrice": "Price"})
+# Primary source: the CSV uploaded to the Unity Catalog volume
+# /Volumes/workspace/ltv/data/online_retail.csv (36,755,154 bytes, verified).
+# read_csv needs no openpyxl, which the serverless runtime does not ship.
+# Fallback: download the original XLSX, which needs openpyxl installed.
+csv_path = "/Volumes/workspace/ltv/data/online_retail.csv"
+if Path(csv_path).exists():
+    df = pd.read_csv(csv_path)
+    print(f"Loaded from volume: {csv_path}")
+else:
+    import urllib.request
+    xlsx = Path("/tmp/online_retail.xlsx")
+    if not xlsx.exists():
+        urllib.request.urlretrieve(
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx", xlsx)
+    df = pd.read_excel(xlsx)
+    df = df[df["CustomerID"].notna()].rename(columns={"CustomerID": "Customer ID", "InvoiceNo": "Invoice", "UnitPrice": "Price"})
 print(f"Rows: {len(df)}, customers: {df['Customer ID'].nunique()}")
 
 # COMMAND ----------
