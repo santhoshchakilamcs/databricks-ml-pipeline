@@ -64,3 +64,22 @@ python3 -m venv .venv
 
 Data files (`data/`, `mlruns/`, `mlflow.db`) are gitignored; the app
 re-downloads public data on first run.
+
+## Live serving + CI/CD (added Nov 4, 2026)
+
+- **Serving app.** `app.py` (FastAPI) serves the trained model at
+  `/predict`, with `/health`, `/metrics`, and `/dashboard`. Verified
+  locally Nov 4, 2026: health ok, sample prediction 776.98 for a customer
+  with 3 orders, 100 items, 1,000 total spend. Run with
+  `uvicorn app:app --port 8000`, or `docker compose up`.
+- **Docker.** `Dockerfile` + `docker-compose.yml` with a healthcheck.
+- **CI/CD.** `.github/workflows/ci.yml` runs tests, downloads data,
+  trains, and gates on the model beating the mean baseline, plus a
+  serving smoke test and Docker build check. `.github/workflows/deploy.yml`
+  is a manual deploy placeholder (Render secrets required).
+  **Important:** the GitHub App cannot push `.github/workflows/*` files,
+  so those two workflow files are in this repo locally and must be added
+  via the GitHub web UI. Everything else in this push was pushed by Muse.
+- **Live hosting status.** The serving app is verified locally and
+  deployment-ready. It is not yet hosted on a public URL; that step needs
+  a host account (Render, Railway, or similar) and is not claimed here.

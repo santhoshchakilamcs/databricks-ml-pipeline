@@ -4,3 +4,4 @@ mlruns/
 mlflow.db
 data/
 *.csv
+__pycache__/
