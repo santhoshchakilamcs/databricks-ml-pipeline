@@ -1,0 +1,49 @@
+{
+  "metrics": {
+    "n_customers": 2718,
+    "n_train": 2174,
+    "n_test": 544,
+    "rmse": 7571.587297904857,
+    "mae": 1118.87599734375,
+    "r2": 0.36407173581702224,
+    "baseline_rmse": 9494.842792318457,
+    "repeat_buyer_rate_test": 0.6948529411764706
+  },
+  "drift": {
+    "n_orders": {
+      "train_mean": 2.8049678012879484,
+      "test_mean": 2.4099264705882355,
+      "relative_change": -0.14083631566762478
+    },
+    "n_items": {
+      "train_mean": 754.8440662373505,
+      "test_mean": 551.9852941176471,
+      "relative_change": -0.2687426200895871
+    },
+    "total_spend": {
+      "train_mean": 1281.182240570377,
+      "test_mean": 1006.0694301470588,
+      "relative_change": -0.2147335497726218
+    },
+    "avg_order_value": {
+      "train_mean": 74.3807339597951,
+      "test_mean": 33.526095807112505,
+      "relative_change": -0.5492637135681625
+    },
+    "tenure_days": {
+      "train_mean": 48.750689972401105,
+      "test_mean": 46.0110294117647,
+      "relative_change": -0.05619736996927402
+    },
+    "recency_days": {
+      "train_mean": 63.259889604415825,
+      "test_mean": 61.83455882352941,
+      "relative_change": -0.022531351063042604
+    },
+    "n_countries": {
+      "train_mean": 1.0013799448022078,
+      "test_mean": 1.0018382352941178,
+      "relative_change": 0.0004576589478236963
+    }
+  }
+}
